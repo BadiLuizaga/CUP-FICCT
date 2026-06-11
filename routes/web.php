@@ -22,6 +22,9 @@ require_once BASE_PATH . '/app/Models/ResultadoFinal.php';
 require_once BASE_PATH . '/app/Models/Docente.php';
 require_once BASE_PATH . '/app/Models/PlanificacionHorario.php';
 require_once BASE_PATH . '/app/Models/ConflictoHorario.php';
+require_once BASE_PATH . '/app/Models/Asistencia.php';
+require_once BASE_PATH . '/app/Models/Examen.php';        // NUEVO
+require_once BASE_PATH . '/app/Models/Nota.php';          // NUEVO
 
 require_once BASE_PATH . '/app/Http/Controllers/Auth/AuthController.php';
 require_once BASE_PATH . '/app/Http/Controllers/DashboardController.php';
@@ -37,6 +40,9 @@ require_once BASE_PATH . '/app/Http/Controllers/ResultadoFinalController.php';
 require_once BASE_PATH . '/app/Http/Controllers/DocenteController.php';
 require_once BASE_PATH . '/app/Http/Controllers/PlanificacionHorarioController.php';
 require_once BASE_PATH . '/app/Http/Controllers/ConflictoHorarioController.php';
+require_once BASE_PATH . '/app/Http/Controllers/AsistenciaController.php';
+require_once BASE_PATH . '/app/Http/Controllers/ExamenController.php';   // NUEVO
+require_once BASE_PATH . '/app/Http/Controllers/NotaController.php';     // NUEVO
 
 if (!function_exists('e')) {
     function e($valor)
@@ -63,7 +69,6 @@ if (!function_exists('url')) {
         }
 
         $path = '/' . ltrim($path, '/');
-
         $url = '/index.php?url=' . rawurlencode($path);
 
         if ($queryString !== '') {
@@ -97,7 +102,6 @@ if (!function_exists('flash')) {
             unset($_SESSION['flash'][$tipo]);
             return $mensaje;
         }
-
         return null;
     }
 }
@@ -124,9 +128,7 @@ if (!function_exists('is_active')) {
         if (is_bool($valor)) {
             return $valor;
         }
-
         $valor = strtolower((string)$valor);
-
         return in_array($valor, ['1', 't', 'true', 'activo', 'active', 'si', 'sí'], true);
     }
 }
@@ -151,7 +153,6 @@ if (!function_exists('format_date')) {
         if (empty($fecha)) {
             return '-';
         }
-
         return date('d/m/Y H:i', strtotime($fecha));
     }
 }
@@ -162,7 +163,6 @@ if (!function_exists('format_date_short')) {
         if (empty($fecha)) {
             return '-';
         }
-
         return date('d/m/Y', strtotime($fecha));
     }
 }
@@ -207,7 +207,6 @@ if (!function_exists('has_role')) {
                 return true;
             }
         }
-
         return false;
     }
 }
@@ -224,7 +223,6 @@ if (!function_exists('view')) {
         }
 
         extract($datos);
-
         $titulo = $datos['titulo'] ?? 'SIGIE';
 
         ob_start();
@@ -232,7 +230,6 @@ if (!function_exists('view')) {
         $contenido = ob_get_clean();
 
         include BASE_PATH . '/resources/views/layouts/app.blade.php';
-
         unset($_SESSION['old']);
     }
 }
@@ -295,6 +292,25 @@ $routes = [
         '/planificacion-horaria/edit' => [\App\Http\Controllers\PlanificacionHorarioController::class, 'edit'],
 
         '/conflictos-horarios' => [\App\Http\Controllers\ConflictoHorarioController::class, 'index'],
+
+        // ASISTENCIA (CU10)
+        '/asistencia' => [\App\Http\Controllers\AsistenciaController::class, 'index'],
+        '/asistencia/registrar' => [\App\Http\Controllers\AsistenciaController::class, 'registrar'],
+        '/asistencia/reporte' => [\App\Http\Controllers\AsistenciaController::class, 'reporte'],
+
+        // ==========================================
+        // NOTAS - NUEVAS RUTAS
+        // ==========================================
+        '/notas' => [\App\Http\Controllers\NotaController::class, 'index'],
+        '/notas/edit' => [\App\Http\Controllers\NotaController::class, 'edit'],
+
+        // ==========================================
+        // EXÁMENES - NUEVAS RUTAS
+        // ==========================================
+        '/examenes' => [\App\Http\Controllers\ExamenController::class, 'index'],
+        '/examenes/rendir' => [\App\Http\Controllers\ExamenController::class, 'rendir'],
+        '/examenes/asentar' => [\App\Http\Controllers\ExamenController::class, 'asentar'],
+        '/examenes/finalizar' => [\App\Http\Controllers\ExamenController::class, 'finalizarExamen'],
     ],
 
     'POST' => [
@@ -332,19 +348,31 @@ $routes = [
 
         '/planificacion-horaria/store' => [\App\Http\Controllers\PlanificacionHorarioController::class, 'store'],
         '/planificacion-horaria/update' => [\App\Http\Controllers\PlanificacionHorarioController::class, 'update'],
+
+        // ASISTENCIA (CU10)
+        '/asistencia/store' => [\App\Http\Controllers\AsistenciaController::class, 'store'],
+
+        // ==========================================
+        // NOTAS - NUEVAS RUTAS POST
+        // ==========================================
+        '/notas/store' => [\App\Http\Controllers\NotaController::class, 'store'],
+
+        // ==========================================
+        // EXÁMENES - NUEVAS RUTAS POST
+        // ==========================================
+        '/examenes/storeRespuestas' => [\App\Http\Controllers\ExamenController::class, 'storeRespuestas'],
+        '/examenes/storeNotas' => [\App\Http\Controllers\ExamenController::class, 'storeNotas'],
     ],
 ];
 
 if (isset($routes[$method][$path])) {
     [$controllerClass, $action] = $routes[$method][$path];
-
     $controller = new $controllerClass();
     $controller->$action();
     exit;
 }
 
 http_response_code(404);
-
 $titulo = 'Página no encontrada';
 $contenido = '
 <div class="alert alert-danger">

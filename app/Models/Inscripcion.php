@@ -586,4 +586,27 @@ class Inscripcion
 
         return 'INS-' . str_pad((string)$numero, 3, '0', STR_PAD_LEFT);
     }
+
+    public static function obtenerPostulantesPorGrupo($grupoId)
+    {
+    $sql = "
+        SELECT 
+            i.id AS inscripcion_id,
+            i.postulante_id,
+            pe.ci,
+            pe.nombres,
+            pe.apellidos,
+            pe.email
+        FROM inscripcion i
+        INNER JOIN postulante po ON po.id = i.postulante_id
+        INNER JOIN persona pe ON pe.id = po.persona_id
+        WHERE i.grupo_id = :grupo_id
+        AND i.estado = 'Activa'
+        ORDER BY pe.apellidos ASC, pe.nombres ASC
+    ";
+
+    $stmt = self::db()->prepare($sql);
+    $stmt->execute([':grupo_id' => $grupoId]);
+    return $stmt->fetchAll();
+    }
 }

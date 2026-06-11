@@ -3,15 +3,18 @@ $usuarioSesion = $_SESSION['usuario'] ?? [];
 $rutaActual = current_path();
 $rolesSesion = $usuarioSesion['roles'] ?? [];
 
+
 $esAdmin = in_array('Administrador', $rolesSesion, true);
 $esAdmision = $esAdmin || in_array('Encargado de admisión', $rolesSesion, true);
 $esFinanciero = $esAdmin || in_array('Encargado financiero', $rolesSesion, true);
 $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
 ?>
 
+
 <style>
     /* ===== SIGIE - SIDEBAR - SISTEMA DE ADMISIÓN ESTUDIANTIL ===== */
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap');
+
 
     :root {
         --navy:        #0d1f35;
@@ -32,6 +35,7 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
         --topbar-h:    58px;
     }
 
+
     .sigie-topbar {
         display: none;
         position: fixed;
@@ -46,7 +50,9 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
         box-shadow: 0 2px 12px rgba(0,0,0,0.3);
     }
 
+
     @media (max-width: 900px) { .sigie-topbar { display: flex; } }
+
 
     .sigie-topbar .tb-brand {
         display: flex;
@@ -54,11 +60,13 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
         gap: 0.6rem;
     }
 
+
     .sigie-topbar .tb-logo {
         width: 30px;
         height: 30px;
         object-fit: contain;
     }
+
 
     .sigie-topbar .tb-name {
         font-family: 'Playfair Display', serif;
@@ -67,6 +75,7 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
         color: var(--text-full);
     }
 
+
     .sigie-topbar .tb-sub {
         font-family: 'DM Sans', sans-serif;
         font-size: 0.65rem;
@@ -74,6 +83,7 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
         letter-spacing: 0.05em;
         text-transform: uppercase;
     }
+
 
     .burger-btn {
         background: rgba(255,255,255,0.08);
@@ -91,7 +101,9 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
         padding: 0;
     }
 
+
     .burger-btn:hover { background: rgba(255,255,255,0.14); }
+
 
     .burger-btn span {
         display: block;
@@ -102,9 +114,11 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
         transition: transform 0.25s, opacity 0.25s;
     }
 
+
     .burger-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
     .burger-btn.open span:nth-child(2) { opacity: 0; }
     .burger-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
 
     .sidebar-overlay {
         display: none;
@@ -116,10 +130,12 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
         transition: opacity 0.25s;
     }
 
+
     .sidebar-overlay.visible {
         display: block;
         opacity: 1;
     }
+
 
     .sigie-sidebar {
         font-family: 'DM Sans', system-ui, sans-serif;
@@ -138,6 +154,7 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
         overflow: hidden;
     }
 
+
     .sigie-sidebar::before {
         content: '';
         position: absolute;
@@ -148,12 +165,15 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
         pointer-events: none;
     }
 
+
     @media (max-width: 900px) {
         .sigie-sidebar { transform: translateX(-100%); top: 0; }
         .sigie-sidebar.mobile-open { transform: translateX(0); }
     }
 
+
     .sigie-sidebar.collapsed { transform: translateX(-100%); }
+
 
     .sb-brand {
         padding: 1.4rem 1.25rem 1.1rem;
@@ -166,6 +186,7 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
         z-index: 1;
     }
 
+
     .sb-logo {
         width: 40px;
         height: 40px;
@@ -174,6 +195,7 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
         filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
     }
 
+
     .sb-title {
         font-family: 'Playfair Display', serif;
         font-size: 1.2rem;
@@ -181,6 +203,7 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
         color: var(--text-full);
         line-height: 1.1;
     }
+
 
     .sb-subtitle {
         font-size: 0.67rem;
@@ -192,12 +215,14 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
         opacity: 0.85;
     }
 
+
     .gold-line {
         height: 2px;
         background: linear-gradient(90deg, var(--gold), var(--gold-light), transparent);
         flex-shrink: 0;
         opacity: 0.6;
     }
+
 
     .sb-user {
         margin: 1rem 1rem 0.75rem;
@@ -212,6 +237,7 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
         position: relative;
         z-index: 1;
     }
+
 
     .sb-avatar {
         width: 36px;
@@ -228,6 +254,7 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
         border: 1px solid rgba(255,255,255,0.12);
     }
 
+
     .sb-user-name {
         font-size: 0.82rem;
         font-weight: 600;
@@ -239,11 +266,13 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
         max-width: 148px;
     }
 
+
     .sb-user-username {
         font-size: 0.7rem;
         color: var(--text-dim);
         margin-top: 1px;
     }
+
 
     .sb-role-badge {
         display: inline-block;
@@ -259,6 +288,7 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
         border-radius: 100px;
     }
 
+
     .sb-nav {
         flex: 1;
         overflow-y: auto;
@@ -269,8 +299,10 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
         scrollbar-color: rgba(255,255,255,0.1) transparent;
     }
 
+
     .sb-nav::-webkit-scrollbar { width: 4px; }
     .sb-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+
 
     .sb-section {
         font-size: 0.65rem;
@@ -280,6 +312,7 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
         letter-spacing: 0.1em;
         padding: 0.9rem 0.5rem 0.4rem;
     }
+
 
     .sb-link {
         display: flex;
@@ -296,10 +329,12 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
         position: relative;
     }
 
+
     .sb-link:hover {
         background: var(--hover-bg);
         color: var(--text-full);
     }
+
 
     .sb-link.active {
         background: var(--active-bg);
@@ -307,6 +342,7 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
         font-weight: 600;
         box-shadow: 0 0 0 1px rgba(26,95,156,0.4), 0 4px 12px var(--active-glow);
     }
+
 
     .sb-link.active::before {
         content: '';
@@ -317,12 +353,14 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
         border-radius: 0 3px 3px 0;
     }
 
+
     .sb-icon {
         font-size: 1rem;
         width: 20px;
         text-align: center;
         flex-shrink: 0;
     }
+
 
     .sb-logout {
         padding: 0.75rem;
@@ -331,6 +369,7 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
         position: relative;
         z-index: 1;
     }
+
 
     .sb-logout a {
         display: flex;
@@ -346,20 +385,24 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
         border: 1px solid transparent;
     }
 
+
     .sb-logout a:hover {
         background: rgba(185,28,28,0.15);
         color: #fca5a5;
         border-color: rgba(185,28,28,0.2);
     }
 
+
     .main-content {
         margin-left: var(--sidebar-w);
         transition: margin-left 0.28s cubic-bezier(.4,0,.2,1);
     }
 
+
     .main-content.sidebar-collapsed {
         margin-left: 0;
     }
+
 
     @media (max-width: 900px) {
         .main-content {
@@ -367,6 +410,7 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
             padding-top: var(--topbar-h);
         }
     }
+
 
     .sb-collapse-btn {
         display: none;
@@ -388,24 +432,29 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
         transition: left 0.28s cubic-bezier(.4,0,.2,1), background 0.2s;
     }
 
+
     .sb-collapse-btn:hover {
         background: var(--navy-light);
         color: var(--text-full);
     }
 
+
     @media (min-width: 901px) {
         .sb-collapse-btn { display: flex; }
     }
+
 
     .sb-collapse-btn.sidebar-collapsed {
         left: 0;
         border-radius: 0 8px 8px 0;
     }
 
+
     @media (hover: none) and (pointer: coarse) {
         .sb-link:active { background: var(--hover-bg); }
     }
 </style>
+
 
 <div class="sigie-topbar">
     <div class="tb-brand">
@@ -418,6 +467,7 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
         </div>
     </div>
 
+
     <button class="burger-btn" id="burgerBtn" aria-label="Menú">
         <span></span>
         <span></span>
@@ -425,14 +475,18 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
     </button>
 </div>
 
+
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
+
 <aside class="sigie-sidebar" id="sigieSidebar">
+
 
     <div class="sb-brand">
         <img src="https://www.ficct.uagrm.edu.bo:3000/uploads/faculty/Escudo_FICCT.png"
              alt="FICCT" class="sb-logo"
              onerror="this.style.display='none'">
+
 
         <div class="sb-brand-text">
             <div class="sb-title">SIGAUCP</div>
@@ -440,14 +494,18 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
         </div>
     </div>
 
+
     <div class="gold-line"></div>
+
 
     <div class="sb-user">
         <div class="sb-avatar" id="sb-initials">U</div>
 
+
         <div class="sb-user-info">
             <div class="sb-user-name"><?= e($usuarioSesion['nombre_completo'] ?? 'Usuario') ?></div>
             <div class="sb-user-username"><?= e($usuarioSesion['username'] ?? '') ?></div>
+
 
             <?php if (!empty($rolesSesion)): ?>
                 <div class="sb-role-badge"><?= e(implode(', ', $rolesSesion)) ?></div>
@@ -457,22 +515,28 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
         </div>
     </div>
 
+
     <nav class="sb-nav">
 
+
         <div class="sb-section">Principal</div>
+
 
         <a href="<?= e(url('/dashboard')) ?>"
            class="sb-link <?= $rutaActual === '/dashboard' ? 'active' : '' ?>">
             <span class="sb-icon">📘</span> Dashboard
         </a>
 
+
         <?php if ($esAdmin): ?>
             <div class="sb-section">Seguridad</div>
+
 
             <a href="<?= e(url('/usuarios')) ?>"
                class="sb-link <?= str_starts_with($rutaActual, '/usuarios') ? 'active' : '' ?>">
                 <span class="sb-icon">👤</span> Usuarios
             </a>
+
 
             <a href="<?= e(url('/roles')) ?>"
                class="sb-link <?= str_starts_with($rutaActual, '/roles') ? 'active' : '' ?>">
@@ -480,33 +544,40 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
             </a>
         <?php endif; ?>
 
+
         <?php if ($esAdmision): ?>
             <div class="sb-section">Admisión</div>
+
 
             <a href="<?= e(url('/carreras')) ?>"
                class="sb-link <?= str_starts_with($rutaActual, '/carreras') && $rutaActual !== '/carreras/cupos' ? 'active' : '' ?>">
                 <span class="sb-icon">🎓</span> Carreras
             </a>
 
+
             <a href="<?= e(url('/carreras/cupos')) ?>"
                class="sb-link <?= $rutaActual === '/carreras/cupos' ? 'active' : '' ?>">
                 <span class="sb-icon">📌</span> Cupos por carrera
             </a>
+
 
             <a href="<?= e(url('/postulantes')) ?>"
                class="sb-link <?= str_starts_with($rutaActual, '/postulantes') ? 'active' : '' ?>">
                 <span class="sb-icon">🧾</span> Postulantes
             </a>
 
+
             <a href="<?= e(url('/documentos')) ?>"
                class="sb-link <?= str_starts_with($rutaActual, '/documentos') ? 'active' : '' ?>">
                 <span class="sb-icon">📄</span> Requisitos
             </a>
 
+
             <a href="<?= e(url('/grupos-academicos')) ?>"
                class="sb-link <?= str_starts_with($rutaActual, '/grupos-academicos') ? 'active' : '' ?>">
                 <span class="sb-icon">🏫</span> Grupos académicos
             </a>
+
 
             <a href="<?= e(url('/inscripciones')) ?>"
                class="sb-link <?= str_starts_with($rutaActual, '/inscripciones') ? 'active' : '' ?>">
@@ -514,8 +585,10 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
             </a>
         <?php endif; ?>
 
+
         <?php if ($esFinanciero): ?>
             <div class="sb-section">Finanzas</div>
+
 
             <a href="<?= e(url('/pagos')) ?>"
                class="sb-link <?= str_starts_with($rutaActual, '/pagos') ? 'active' : '' ?>">
@@ -523,8 +596,10 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
             </a>
         <?php endif; ?>
 
+
         <?php if ($esAdmin || $esAdmision || $esDocente): ?>
             <div class="sb-section">Académico</div>
+
 
             <?php if ($esAdmin || $esAdmision): ?>
                 <a href="<?= e(url('/docentes')) ?>"
@@ -532,10 +607,12 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
                     <span class="sb-icon">👨‍🏫</span> Docentes
                 </a>
 
+
                 <a href="<?= e(url('/planificacion-horaria')) ?>"
                    class="sb-link <?= str_starts_with($rutaActual, '/planificacion-horaria') ? 'active' : '' ?>">
                     <span class="sb-icon">📅</span> Planificación horaria
                 </a>
+
 
                 <a href="<?= e(url('/conflictos-horarios')) ?>"
                    class="sb-link <?= str_starts_with($rutaActual, '/conflictos-horarios') ? 'active' : '' ?>">
@@ -543,13 +620,48 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
                 </a>
             <?php endif; ?>
 
+
+            <!-- ========================================== -->
+            <!-- BOTONES AGREGADOS: NOTAS, EXÁMENES Y ASISTENCIA -->
+            <!-- ========================================== -->
+
+
+            <!-- NOTAS (Asentar calificaciones) -->
+            <?php if ($esDocente): ?>
+                <a href="<?= e(url('/notas')) ?>"
+                   class="sb-link <?= str_starts_with($rutaActual, '/notas') ? 'active' : '' ?>">
+                    <span class="sb-icon">📝</span> Notas
+                </a>
+            <?php endif; ?>
+
+
+            <!-- EXÁMENES (Rendir examen / Asentar notas manuales) -->
+            <?php if ($esAdmin || $esAdmision || $esDocente): ?>
+                <a href="<?= e(url('/examenes')) ?>"
+                   class="sb-link <?= str_starts_with($rutaActual, '/examenes') ? 'active' : '' ?>">
+                    <span class="sb-icon">📋</span> Exámenes
+                </a>
+            <?php endif; ?>
+
+
+            <!-- ASISTENCIA (Registro de asistencia) -->
+            <?php if ($esDocente): ?>
+                <a href="<?= e(url('/asistencia')) ?>"
+                   class="sb-link <?= str_starts_with($rutaActual, '/asistencia') ? 'active' : '' ?>">
+                    <span class="sb-icon">📊</span> Asistencia
+                </a>
+            <?php endif; ?>
+
+
             <a href="<?= e(url('/resultados')) ?>"
                class="sb-link <?= str_starts_with($rutaActual, '/resultados') ? 'active' : '' ?>">
                 <span class="sb-icon">🏆</span> Resultados finales
             </a>
         <?php endif; ?>
 
+
     </nav>
+
 
     <div class="sb-logout">
         <a href="<?= e(url('/logout')) ?>" onclick="return confirm('¿Deseas cerrar sesión?')">
@@ -557,9 +669,12 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
         </a>
     </div>
 
+
 </aside>
 
+
 <button class="sb-collapse-btn" id="collapseBtn" aria-label="Colapsar menú">›</button>
+
 
 <script>
 (function () {
@@ -570,13 +685,16 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
     var mainContent = document.querySelector('.main-content');
     var isMobile = function () { return window.innerWidth <= 900; };
 
+
     var nameEl = document.querySelector('.sb-user-name');
     var initEl = document.getElementById('sb-initials');
+
 
     if (nameEl && initEl) {
         var parts = nameEl.textContent.trim().split(' ').filter(Boolean);
         initEl.textContent = ((parts[0] ? parts[0][0] : '') + (parts[1] ? parts[1][0] : '')).toUpperCase() || 'U';
     }
+
 
     function openMobile() {
         sidebar.classList.add('mobile-open');
@@ -585,6 +703,7 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
         document.body.style.overflow = 'hidden';
     }
 
+
     function closeMobile() {
         sidebar.classList.remove('mobile-open');
         overlay.classList.remove('visible');
@@ -592,31 +711,38 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
         document.body.style.overflow = '';
     }
 
+
     if (burger) {
         burger.addEventListener('click', function () {
             sidebar.classList.contains('mobile-open') ? closeMobile() : openMobile();
         });
     }
 
+
     if (overlay) {
         overlay.addEventListener('click', closeMobile);
     }
 
+
     var collapsed = false;
+
 
     if (collapseBtn) {
         collapseBtn.addEventListener('click', function () {
             collapsed = !collapsed;
 
+
             sidebar.classList.toggle('collapsed', collapsed);
             collapseBtn.classList.toggle('sidebar-collapsed', collapsed);
             collapseBtn.textContent = collapsed ? '‹' : '›';
+
 
             if (mainContent) {
                 mainContent.classList.toggle('sidebar-collapsed', collapsed);
             }
         });
     }
+
 
     window.addEventListener('resize', function () {
         if (!isMobile()) {

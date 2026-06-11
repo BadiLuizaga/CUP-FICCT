@@ -509,4 +509,22 @@ class Postulante
         $valor = trim((string)($valor ?? ''));
         return $valor === '' ? null : $valor;
     }
+
+    public static function obtenerPorUsuarioId($usuarioId)
+    {
+        $sql = "
+            SELECT po.*
+            FROM postulante po
+            INNER JOIN persona p ON p.id = po.persona_id
+            INNER JOIN usuario u ON u.persona_id = p.id
+            WHERE u.id = :usuario_id
+            LIMIT 1
+        ";
+
+        $stmt = self::db()->prepare($sql);
+        $stmt->execute([':usuario_id' => (int)$usuarioId]);
+        $postulante = $stmt->fetch();
+
+        return $postulante ?: null;
+    }
 }

@@ -203,7 +203,7 @@ $estadoOld = old('estado', 'Pendiente');
                         <rect x="270" y="235" width="16" height="16" fill="black"/>
 
                         <text x="150" y="295" text-anchor="middle" font-size="14" font-weight="bold" font-family="Arial">
-                            SIGAUCP - QR
+                            CUP - QR
                         </text>
                     </svg>
                 </div>

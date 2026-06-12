@@ -489,7 +489,7 @@ $esDocente = $esAdmin || in_array('Docente', $rolesSesion, true);
 
 
         <div class="sb-brand-text">
-            <div class="sb-title">SIGAUCP</div>
+            <div class="sb-title">CUP</div>
             <div class="sb-subtitle">FICCT · UAGRM</div>
         </div>
     </div>

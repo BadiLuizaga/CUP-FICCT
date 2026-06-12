@@ -40,7 +40,7 @@
         display: none;
         background:
             linear-gradient(160deg, rgba(13,31,53,0.82) 0%, rgba(26,95,156,0.55) 60%, rgba(200,155,60,0.25) 100%),
-            url('https://cup.ficct.uagrm.edu.bo/pluginfile.php/1/local_edwiserpagebuilder/media/554450943/Modulo236-FICCT-VF_1000.jpg')
+            url('https://cdc.vardhaman.org/images/courses/course-2.jpg')
             center/cover no-repeat;
         overflow: hidden;
     }
@@ -439,7 +439,7 @@
                     <div class="stat-label">Facultad</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-num">SIGAUCP</div>
+                    <div class="stat-num">CUP</div>
                     <div class="stat-label">Sistema</div>
                 </div>
             </div>
@@ -455,7 +455,7 @@
                     <img src="https://www.ficct.uagrm.edu.bo:3000/uploads/faculty/Escudo_FICCT.png" alt="Escudo FICCT">
                 </div>
                 <div class="logo-text-wrap">
-                    <div class="logo-title">SIGAUCP</div>
+                    <div class="logo-title">CUP</div>
                     <div class="logo-sub">UAGRM · FICCT</div>
                 </div>
             </div>

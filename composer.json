@@ -1,0 +1,11 @@
+{
+    "name": "dj/sigie-parcial-2",
+    "type": "project",
+    "authors": [
+        {
+            "name": "BadiLuizaga",
+            "email": "luizagabadi@gmail.com"
+        }
+    ],
+    "require": {}
+}

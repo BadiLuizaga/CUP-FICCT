@@ -51,6 +51,35 @@ if (!function_exists('e')) {
     }
 }
 
+if (!function_exists('env_get')) {
+    function env_get($clave, $default = null)
+    {
+        static $archivo = null;
+
+        $valor = getenv($clave);
+        if ($valor !== false && $valor !== '') {
+            return $valor;
+        }
+
+        if ($archivo === null) {
+            $archivo = [];
+            $ruta = BASE_PATH . '/.env';
+            if (is_file($ruta)) {
+                foreach (file($ruta, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $linea) {
+                    $linea = trim($linea);
+                    if ($linea === '' || str_starts_with($linea, '#') || !str_contains($linea, '=')) {
+                        continue;
+                    }
+                    [$k, $v] = explode('=', $linea, 2);
+                    $archivo[trim($k)] = trim(trim(trim($v), '"'), "'");
+                }
+            }
+        }
+
+        return $archivo[$clave] ?? $default;
+    }
+}
+
 if (!function_exists('url')) {
     function url($path = '/')
     {
@@ -297,6 +326,8 @@ $routes = [
         '/asistencia' => [\App\Http\Controllers\AsistenciaController::class, 'index'],
         '/asistencia/registrar' => [\App\Http\Controllers\AsistenciaController::class, 'registrar'],
         '/asistencia/reporte' => [\App\Http\Controllers\AsistenciaController::class, 'reporte'],
+        '/asistencia/reporte/excel' => [\App\Http\Controllers\AsistenciaController::class, 'exportarExcel'],
+        '/asistencia/reporte/html' => [\App\Http\Controllers\AsistenciaController::class, 'exportarHtml'],
 
         // ==========================================
         // NOTAS - NUEVAS RUTAS
@@ -351,6 +382,7 @@ $routes = [
 
         // ASISTENCIA (CU10)
         '/asistencia/store' => [\App\Http\Controllers\AsistenciaController::class, 'store'],
+        '/asistencia/transcribir' => [\App\Http\Controllers\AsistenciaController::class, 'transcribir'],
 
         // ==========================================
         // NOTAS - NUEVAS RUTAS POST

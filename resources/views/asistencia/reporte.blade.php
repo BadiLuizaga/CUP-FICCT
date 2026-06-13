@@ -33,6 +33,10 @@
     </div>
     <div class="no-print">
         <a href="<?= e(url('/asistencia')) ?>" class="btn btn-secondary">← Volver</a>
+        <?php if ($grupoId > 0 && !empty($postulantes)): ?>
+            <a href="<?= e(url('/asistencia/reporte/excel?grupo_id=' . $grupoId . '&fecha_inicio=' . $fechaInicio . '&fecha_fin=' . $fechaFin)) ?>" class="btn btn-success">📊 Excel</a>
+            <a href="<?= e(url('/asistencia/reporte/html?grupo_id=' . $grupoId . '&fecha_inicio=' . $fechaInicio . '&fecha_fin=' . $fechaFin)) ?>" class="btn btn-warning">🌐 HTML</a>
+        <?php endif; ?>
         <button onclick="window.print()" class="btn btn-primary">🖨️ Imprimir</button>
     </div>
 </div>
@@ -40,7 +44,13 @@
 <!-- Formulario de filtros -->
 <div class="card shadow-sm mb-4 no-print">
     <div class="card-body">
-        <form action="/index.php" method="GET" class="row g-3">
+        <!-- Dictado por voz -->
+        <div class="d-flex align-items-center gap-2 mb-3 flex-wrap">
+            <button type="button" id="btnVoz" class="btn btn-outline-danger">🎤 Dictar filtros</button>
+            <span id="vozEstado" class="small text-muted"></span>
+        </div>
+
+        <form id="formReporte" action="/index.php" method="GET" class="row g-3">
             <input type="hidden" name="url" value="/asistencia/reporte">
             
             <div class="col-md-5">
@@ -291,3 +301,115 @@
 <?php elseif ($grupoId == 0): ?>
     <div class="alert alert-info">Seleccione un grupo y rango de fechas para ver el reporte.</div>
 <?php endif; ?>
+
+<!-- Dictado por voz para los filtros del reporte -->
+<script>
+(function () {
+    const btn = document.getElementById('btnVoz');
+    const estado = document.getElementById('vozEstado');
+    const form = document.getElementById('formReporte');
+    if (!btn || !form) return;
+
+    const selGrupo = form.querySelector('select[name="grupo_id"]');
+    const inpInicio = form.querySelector('input[name="fecha_inicio"]');
+    const inpFin = form.querySelector('input[name="fecha_fin"]');
+
+    let mediaRecorder = null;
+    let chunks = [];
+    let grabando = false;
+
+    function setEstado(msg, tipo) {
+        estado.textContent = msg || '';
+        estado.className = 'small ' + (tipo === 'error' ? 'text-danger' : (tipo === 'ok' ? 'text-success' : 'text-muted'));
+    }
+
+    function codigoDeOpcion(opt) {
+        return (opt.textContent || '').split(' - ')[0].trim();
+    }
+
+    function listaGrupos() {
+        return Array.from(selGrupo.options).filter(o => o.value).map(codigoDeOpcion);
+    }
+
+    function detener() {
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+            mediaRecorder.stop();
+        }
+        grabando = false;
+        btn.textContent = '🎤 Dictar filtros';
+        btn.classList.add('btn-outline-danger');
+        btn.classList.remove('btn-danger');
+    }
+
+    btn.addEventListener('click', async function () {
+        if (grabando) { detener(); return; }
+
+        if (!navigator.mediaDevices || !window.MediaRecorder) {
+            setEstado('Tu navegador no soporta grabación de audio.', 'error');
+            return;
+        }
+
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            chunks = [];
+            mediaRecorder = new MediaRecorder(stream);
+            mediaRecorder.addEventListener('dataavailable', e => { if (e.data.size > 0) chunks.push(e.data); });
+            mediaRecorder.addEventListener('stop', function () {
+                stream.getTracks().forEach(t => t.stop());
+                enviar(new Blob(chunks, { type: 'audio/webm' }));
+            });
+            mediaRecorder.start();
+            grabando = true;
+            btn.textContent = '⏹️ Detener';
+            btn.classList.remove('btn-outline-danger');
+            btn.classList.add('btn-danger');
+            setEstado('Grabando… di el grupo y el rango de fechas, luego presiona Detener.');
+        } catch (err) {
+            setEstado('No se pudo acceder al micrófono. Revisa los permisos del navegador.', 'error');
+        }
+    });
+
+    async function enviar(blob) {
+        setEstado('Procesando audio…');
+        btn.disabled = true;
+        try {
+            const fd = new FormData();
+            fd.append('audio', blob, 'audio.webm');
+            fd.append('grupos', JSON.stringify(listaGrupos()));
+
+            const resp = await fetch('<?= e(url('/asistencia/transcribir')) ?>', { method: 'POST', body: fd });
+            const data = await resp.json();
+
+            if (!data.ok) {
+                setEstado(data.error || 'No se pudo transcribir el audio.', 'error');
+                return;
+            }
+            aplicar(data);
+        } catch (err) {
+            setEstado('Error al enviar el audio: ' + err.message, 'error');
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    function aplicar(data) {
+        let grupoOk = false;
+        if (data.grupo_codigo) {
+            const opt = Array.from(selGrupo.options).find(o =>
+                o.value && codigoDeOpcion(o).toUpperCase() === String(data.grupo_codigo).toUpperCase()
+            );
+            if (opt) { selGrupo.value = opt.value; grupoOk = true; }
+        }
+        if (data.fecha_inicio) inpInicio.value = data.fecha_inicio;
+        if (data.fecha_fin) inpFin.value = data.fecha_fin;
+
+        const dicho = 'Entendí: "' + (data.text || '') + '".';
+        if (grupoOk && data.fecha_inicio && data.fecha_fin) {
+            setEstado(dicho + ' Generando reporte…', 'ok');
+            setTimeout(() => form.submit(), 1200);
+        } else {
+            setEstado(dicho + ' Revisa y completa los campos que falten.', 'error');
+        }
+    }
+})();
+</script>
